@@ -1,0 +1,40 @@
+#Allow Loopback incoming traffic 
+iptables -A INPUT -i lo -j ACCEPT
+
+#Allow ping request 
+iptables -A INPUT -p icmp -j ACCEPT
+
+#Allow port 53 for dns
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED  -j ACCEPT
+
+#Drop Unwanted Docker Traffic
+iptables -I DOCKER -i eth0 -j DROP
+
+#Allow inter-cluster communication
+{% for host in groups['dcos-cluster'] %}
+iptables -A INPUT -s {{ hostvars[host]['ansible_default_ipv4']['address'] }} -j ACCEPT
+iptables -I DOCKER -i eth0 -s {{ hostvars[host]['ansible_default_ipv4']['address'] }} -j ACCEPT
+{% endfor %}
+
+#Open Basic-Ports for Public Agents
+{% if inventory_hostname in groups['public-agent'] %}
+{% for port in iptables_allowed_tcp_ports_public %}
+iptables -A INPUT -p tcp --dport {{ port }} -j ACCEPT
+{% endfor %}
+{% endif %}
+
+#Open Basic Ports for Master Nodes
+{% if inventory_hostname in groups['mesos-master'] %}
+{% for port in iptables_allowed_tcp_ports_master %}
+iptables -A INPUT -p tcp --dport {{ port }} -j ACCEPT
+{% endfor %}
+{% endif %}
+
+#Drop Unwanted Traffic
+iptables -A INPUT -j DROP

@@ -1,0 +1,25 @@
+---
+# handlers file for iptables-dcos
+
+- name: save iptables rules
+  command: service iptables save
+  notify: reload iptables rules 
+
+- name: reload iptables rules
+  file: path=/etc/sysconfig/iptables state=absent
+  notify: flush current rules
+
+- name: flush current rules
+  command: "{{ item }}"
+  with_items:
+    - iptables -F INPUT
+    - iptables -F DOCKER
+  notify: save new rules
+
+- name: save new rules
+  command: service iptables save
+  notify: restart iptables
+
+- name: restart iptables
+  command: service iptables restart
+

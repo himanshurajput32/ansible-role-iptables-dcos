@@ -1,0 +1,35 @@
+---
+
+- name: Install iptables package
+  yum:  name=iptables state=present
+  environment: '{{ proxy_env }}'
+ 
+- name: Ensure that config directory exists
+  file: state=directory path="{{ iptables_confdir }}"
+
+- name: Stop running Firewalld
+  command: "{{ item }}"
+  with_items:
+   - systemctl stop firewalld
+   - systemctl disable firewalld
+   - systemctl mask firewalld
+
+- name:  Skipping Docker repo
+  lineinfile: dest=/etc/yum.repos.d/docker.repo line='{{item}}'
+  with_items:
+   - 'skip_if_unavailable = 1'
+   - 'keepcache = 0' 
+  
+- name: Ensure latest iptables installed
+  yum: name=iptables-services state=latest
+  environment: '{{ proxy_env }}'
+
+- name: Make sure iptables is running
+  service: name=iptables state=started 
+
+- name: Enable Iptables Service
+  command: systemctl enable iptables
+
+- name: Prepare iptables rules 
+  template: dest={{ iptables_rules_path }} src=iptables.rules.j2 owner=root group=root mode=0744
+  notify: save iptables rules

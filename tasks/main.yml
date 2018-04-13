@@ -1,0 +1,4 @@
+---
+# tasks file for iptables-dcos
+- include_tasks: iptables.yml
+  tags: [iptables]

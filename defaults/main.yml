@@ -1,0 +1,7 @@
+---
+# defaults file for iptables-dcos
+
+iptables_allowed_tcp_ports_public: [80,443,9090,9091]
+iptables_allowed_tcp_ports_master: [80,443]
+iptables_confdir: /etc/sysconfig
+iptables_rules_path: "{{ iptables_confdir }}/iptables-config"

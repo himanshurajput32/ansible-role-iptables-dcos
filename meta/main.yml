@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Himanshu Rajput
+  description: Software Conultant
+  company: Knoldus Inc.
+
+  
+
+
+  min_ansible_version: 2.4
+
+ 
+
+  #
+  # platforms is a list of platforms, and each platform has a name and a list of versions.
+  #
+   platforms:
+   - name: CentOS
+     versions:
+     - 7.4
+  
