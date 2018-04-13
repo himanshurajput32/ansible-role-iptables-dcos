@@ -1,7 +1,7 @@
 galaxy_info:
-  author: Himanshu_Rajput
-  description: Software_Conultant
-  company: Knoldus
+  author: Himanshu Rajput
+  description: Software Consultant
+  company: Knoldus Inc
   min_ansible_version: 2.4
   license: BSD
   platforms:
