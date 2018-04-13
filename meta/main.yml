@@ -3,8 +3,9 @@ galaxy_info:
   description: Software_Conultant
   company: Knoldus
   min_ansible_version: 2.4
+  license: BSD
   platforms:
     - name: CentOS
       versions:
-        - 7.4
+        - all
   
